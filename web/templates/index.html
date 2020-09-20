@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+
+{% block head %}
+<title>Dashbord</title>
+<script src="/js/canvas.js"></script>
+{% endblock %}
+
+
+
+{% block body %}
+
+<!-- start the side bar -->
+<div class="sidebar">
+    <a class="active" href="/">Dashboard</a>
+    <a href="/Configuratie">Configuratie</a>
+</div>
+
+<!-- start the content -->
+<div class="content">
+    <canvas id="my_canvas" width="500" height="300"></canvas>
+    <h2 id="status">0 | 0</h2>
+</div>
+
+{% endblock %}

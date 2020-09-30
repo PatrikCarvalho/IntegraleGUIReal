@@ -30,12 +30,64 @@ function initFixedPoints() {
     for (var i = 0; i < buildings.length; i++) {
          var b = buildings[i];
          ctx.fillStyle = b.bg;
-         ctx.fillRect(b.x,b.y,b.w,b.h)
+         ctx.fillRect(b.x,b.y,b.w,b.h);
     }
 }
+
+function varPythonJS() {
+    fetch(`${window.origin}/exampleAJAX`)
+    .then(function(response){
+
+        if (response.status !== 200) {
+            console.log(`Response was not 200: ${respnse.status}`);
+            return ;
+        }
+
+        response.json().then(function(xyCoordinates){
+            var ctx = document.getElementById("my_canvas").getContext("2d");
+            ctx.fillStyle = "black"
+            ctx.fillRect(xyCoordinates[0], xyCoordinates[1], 50, 50);   
+        })
+
+    });
+};
+
+// Using websockets to get draw in canvas
+function drawFromPython(){
+    var ctx = document.getElementById("my_canvas").getContext("2d");
+    websocket = new WebSocket("ws://192.168.1.205:6789/");
+
+    websocket.onmessage = function (event) {
+        
+        data = JSON.parse(event.data);
+
+        
+        var i;
+        for (i = 0; i < data.length; i++) {
+            var detectie = data[i];
+            // Draw points
+            ctx.fillStyle = "black"
+            ctx.beginPath();   
+            ctx.moveTo(detectie.points[0].x, detectie.points[0].y);
+            ctx.lineTo(detectie.points[1].x, detectie.points[1].y);
+            ctx.lineTo(detectie.points[2].x, detectie.points[2].y);
+            ctx.lineTo(detectie.points[3].x, detectie.points[3].y);
+            ctx.closePath();
+            ctx.fill();
+            
+        }
+        
+    };
+    websocket.onopen = function(event) {
+        websocket.send(JSON.stringify({action: 'register'}));
+    }
+    
+};
 
 
 window.addEventListener("load", function (event) {
     initMouseDraw();
     initFixedPoints();
+    varPythonJS();
+    drawFromPython();
 });
